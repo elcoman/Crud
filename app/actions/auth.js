@@ -51,37 +51,45 @@ export async function signup(state, formData) {
 }
 
 export async function login(state, formData) {
-  const validatedFields = LoginFormSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  })
+  try {
+    const validatedFields = LoginFormSchema.safeParse({
+      email: formData.get('email'),
+      password: formData.get('password'),
+    })
 
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+      }
     }
+
+    const { email, password } = validatedFields.data
+    const db = getDb()
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email))
+
+    if (!user) {
+      return { message: 'Onjuiste email of wachtwoord.' }
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password)
+
+    if (!passwordMatch) {
+      return { message: 'Onjuiste email of wachtwoord.' }
+    }
+
+    await createSession(user.id, user.role)
+    redirect('/')
+  } catch (error) {
+    if (error?.digest?.startsWith('NEXT_REDIRECT')) {
+      throw error
+    }
+    console.error('Login error:', error)
+    return { message: `Server error: ${error.message}` }
   }
-
-  const { email, password } = validatedFields.data
-  const db = getDb()
-
-  const [user] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, email))
-
-  if (!user) {
-    return { message: 'Onjuiste email of wachtwoord.' }
-  }
-
-  const passwordMatch = await bcrypt.compare(password, user.password)
-
-  if (!passwordMatch) {
-    return { message: 'Onjuiste email of wachtwoord.' }
-  }
-
-  await createSession(user.id, user.role)
-  redirect('/')
 }
 
 export async function logout() {
