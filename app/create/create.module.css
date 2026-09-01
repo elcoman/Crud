@@ -1,0 +1,32 @@
+.input {
+    padding: 0.5rem 1rem;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+
+   
+}
+
+.button {
+    height: 35px;
+    padding: 0 1rem;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    background-color: #6b6b6b;
+    color: white;
+    border: none;
+    position: relative;
+    left: -1px;
+}
+
+.form {
+    padding-top: 1rem;
+    text-align: center;
+
+}
+
+.title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
