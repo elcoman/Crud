@@ -1,10 +1,11 @@
 import { eq, and } from 'drizzle-orm'
-import db from '@/app/lib/db'
+import getDb from '@/app/lib/db'
 import { tasksTable } from '@/app/lib/schema'
 import { getSession } from '@/app/lib/dal'
 
 async function getAuthorizedTask(id, session) {
   const taskId = parseInt(id)
+  const db = getDb()
 
   if (session.role === 'admin') {
     const [task] = await db
@@ -74,6 +75,7 @@ export async function PUT(request, { params }) {
   }
 
   const { title } = await request.json()
+  const db = getDb()
 
   const [updatedTask] = await db
     .update(tasksTable)
@@ -107,6 +109,7 @@ export async function DELETE(request, { params }) {
     })
   }
 
+  const db = getDb()
   await db.delete(tasksTable).where(eq(tasksTable.id, task.id))
 
   return new Response(null, { status: 204 })

@@ -1,4 +1,4 @@
-import db from '@/app/lib/db'
+import getDb from '@/app/lib/db'
 import { usersTable } from '@/app/lib/schema'
 import { getSession } from '@/app/lib/dal'
 
@@ -19,6 +19,7 @@ export async function GET() {
     })
   }
 
+  const db = getDb()
   const users = await db
     .select({
       id: usersTable.id,

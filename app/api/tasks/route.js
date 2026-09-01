@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import db from '@/app/lib/db'
+import getDb from '@/app/lib/db'
 import { tasksTable } from '@/app/lib/schema'
 import { getSession } from '@/app/lib/dal'
 
@@ -15,6 +15,7 @@ export async function GET(request) {
 
   const { searchParams } = new URL(request.url)
   const filterUserId = searchParams.get('userId')
+  const db = getDb()
 
   let tasks
 
@@ -47,6 +48,7 @@ export async function POST(request) {
   }
 
   const { title } = await request.json()
+  const db = getDb()
 
   if (!title) {
     return new Response(JSON.stringify({ error: 'Titel is verplicht' }), {

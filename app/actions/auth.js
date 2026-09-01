@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { redirect } from 'next/navigation'
-import db from '@/app/lib/db'
+import getDb from '@/app/lib/db'
 import { usersTable } from '@/app/lib/schema'
 import { SignupFormSchema } from '@/app/lib/definitions'
 import { createSession } from '@/app/lib/session'
@@ -25,6 +25,7 @@ export async function signup(state, formData) {
 
   const { name, email, password } = validatedFields.data
   const hashedPassword = await bcrypt.hash(password, 10)
+  const db = getDb()
 
   const existingUser = await db
     .select()
@@ -62,6 +63,7 @@ export async function login(state, formData) {
   }
 
   const { email, password } = validatedFields.data
+  const db = getDb()
 
   const [user] = await db
     .select()
